@@ -1,0 +1,41 @@
+#!/bin/csh -f
+#
+# USAGE: custom_recon01.ss  <subj1_id>  <subj2_id> ... <subjn_id>
+#
+# VAV 4/14/18 adapted from reconstruct.ss
+# TODO: put in some error checks for file non-existence that will return script
+
+set root="/mnt/neurocube/local/serenceslab/vy/FSDAT/"
+
+#Create directory stucture and convert DICOMs for each subject:
+foreach subj ($argv)
+
+    if ( ! -e $SUBJECTS_DIR$subj/mri/orig.mgz ) then
+        # try to convert the .nii into the .mgz
+        if ( ! -e "$root/RAW/$subj/NII/${subj}_TAL.nii.gz" ) then
+            cp "/mnt/neurocube/local/serenceslab/retBV/${subj}2/Anat/${subj}_TAL.nii.gz" "$root/RAW/$subj/NII/${subj}_TAL.nii.gz"
+        endif
+        mri_convert "$root/RAW/$subj/NII/${subj}_TAL.nii.gz" "$root/ANAT/$subj/mri/orig.mgz"
+        cp "$root/ANAT/$subj/mri/orig.mgz" "$root/ANAT/$subj/mri/orig/001.mgz"
+        echo "Converted ${subj}_TAL.nii.gz to orig.mgz!"
+    endif
+    
+    if ( ! -e $SUBJECTS_DIR$subj/mri/brainmask.mgz ) then
+        cd "$SUBJECTS_DIR$subj/mri/"
+        # separating out autorecon1 commands with custom flags for a nii created from a BV TAL
+        mri_nu_correct.mni --i orig.mgz --o nu.mgz --n 2
+        mri_normalize -g 1 -mprage nu.mgz T1.mgz
+        cp nu.mgz brainmask.mgz
+        cd $SUBJECTS_DIR
+    else
+        echo "Skipping autorecon1 steps..."
+    endif
+
+    # now do the rest of it!
+    recon-all -autorecon2 -subjid $subj
+    recon-all -autorecon3 -subjid $subj
+    recon-all -hippocampal-subfields-T1 -subjid $subj
+
+end
+	
+

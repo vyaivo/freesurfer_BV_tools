@@ -1,0 +1,21 @@
+#!/bin/csh -f
+#
+# USAGE: init_custom01 <subj1_id> <subj2_id> ... <subjn_id>
+#
+# This script makes the directories we need to run our custom version of
+# Freesurfer6 recon-all. It will also make the .mgz file from your .nii.
+
+# VAV 4/14/18 adapted from init.ss
+
+set root="/mnt/neurocube/local/serenceslab/vy/FSDAT/"
+
+#Create directory stucture
+
+foreach subj ($argv)
+    
+    mkdir -p "$root/RAW/$subj/NII"
+    mkdir -p "$root/ANAT/$subj/mri/orig"
+    echo "Created directories RAW/$subj/NII & ANAT/$subj/mri/orig"
+    
+end
+
