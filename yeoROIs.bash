@@ -36,6 +36,11 @@ do
         mri_surf2surf --srcsubject yeoatlas --trgsubject $ss --hemi $hh --sval-annot \
             $SUBJECTS_DIR/yeoatlas/label/$hh.Yeo2011_17Networks_N1000.annot \
             --tval $SUBJECTS_DIR/$ss/label/$hh.yeo.annot
+
+        mri_label2vol --annot $SUBJECTS_DIR/yeoatlas/label/$hh.yeo.annot --temp \
+            $SUBJECTS_DIR/$ss/mri/rawavg.mgz --o $SUBJECTS_DIR/$ss/mri/lh.yeo.mgz \
+            --subject $ss --hemi $hh --identity --proj frac 0 1 0.1
+
         echo "FINISHED $ss $hh conversion from Yeo 2011 parcellation"
     done
 done
