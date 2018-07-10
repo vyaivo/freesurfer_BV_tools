@@ -1,4 +1,7 @@
 function FShippoToVMR(sub)
+% This is an example script that shows how to convert .mgz segmentation
+% files into BrainVoyager anatomical files (.vmr).
+%
 % This assumes that the Freesurfer hippocampal subfield segmentation has
 % completed without error. For a given subject, it converts the desired
 % subfields (here hardcoded as CA1/CA3 & DG) to separate BrainVoyager
